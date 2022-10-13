@@ -14,5 +14,7 @@ Depois é preciso pôr o python a comunicar com o minizinc, para testar com dife
 Por fim testar com grafos grandes e desconfio que vamos perceber que temos que otimizar a nossa solução.
 - Para isto é preciso ver as orientações em chkcpf/README-chkcpf.txt
 
-Uma otimização que deve ser simples é substituir a representação do grado, agora é uma matriz de adjacencias, mas pode ser um vetor de listas.
-Outra otimização é implementar o algoritmo do paper, mas não fiz esse porque ou é preciso fazer uma binary tree e o minizinc só tem arrays, dá para fazer uma binary tree a partir de arrays, mas é complicado.
+Uma otimização que deve ser simples é substituir a representação do grafo, agora é uma matriz de adjacencias, mas pode ser um vetor de listas (ou pelos vistos o melhor é um vetor de sets).
+Outra otimização é definir um lower bound para os timesteps e ir incrementando até um upperbound.
+
+(esquecer isto, já tive a comentar com malta e não é necessário) Outra otimização é implementar o algoritmo do paper, mas não fiz esse porque ou é preciso fazer uma binary tree e o minizinc só tem arrays, dá para fazer uma binary tree a partir de arrays, mas é complicado.
