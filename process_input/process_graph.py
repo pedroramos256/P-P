@@ -7,6 +7,7 @@ def process_graph(lines):
     while lines[ix][0] == "#":
         ix += 1
     V = int(lines[ix])
+    print(V)
     E = int(lines[ix+1])
     matrix = np.zeros((V,V))
     for l in lines[ix+2:]:
