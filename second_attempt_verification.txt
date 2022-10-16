@@ -1,0 +1,30 @@
+ex01-graph.txt ex01-scen.txt
+ex02-graph.txt ex02-scen.txt
+Segmentation fault (core dumped)
+ex03-graph.txt ex03-scen.txt
+ex04-graph.txt ex04-scen.txt
+ex05-graph.txt ex05-scen.txt
+ex06-graph.txt ex06-scen.txt
+ex07-graph.txt ex07-scen.txt
+ex08-graph.txt ex08-scen.txt
+ex09-graph.txt ex09-scen.txt
+ex10-graph.txt ex10-scen.txt
+Segmentation fault (core dumped)
+ex11-graph.txt ex11-scen.txt
+ex12-graph.txt ex12-scen.txt
+ex13-graph.txt ex13-scen.txt
+Segmentation fault (core dumped)
+ex14-graph.txt ex14-scen.txt
+Segmentation fault (core dumped)
+ex15-graph.txt ex15-scen.txt
+Segmentation fault (core dumped)
+ex16-graph.txt ex16-scen.txt
+Segmentation fault (core dumped)
+ex17-graph.txt ex17-scen.txt
+Segmentation fault (core dumped)
+ex18-graph.txt ex18-scen.txt
+Segmentation fault (core dumped)
+ex19-graph.txt ex19-scen.txt
+Segmentation fault (core dumped)
+ex20-graph.txt ex20-scen.txt
+Segmentation fault (core dumped)

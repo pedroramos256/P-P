@@ -1,0 +1,1 @@
+constraint forall(i in TIMESTEPS)(all_different([makespan[i,j] | j in AGENTS]));

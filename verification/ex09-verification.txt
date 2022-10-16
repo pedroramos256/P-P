@@ -2,6 +2,3 @@
 *** author: Joao Marques-Silva ***
 
 Checking time step 0
-Checking time step 1
-Agent 1 moving to non-empty position: 4
-Checking failed at time step: 1

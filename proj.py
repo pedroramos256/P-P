@@ -15,31 +15,33 @@ while example_graph[ix][0] == "#":
     ix += 1
 V = int(example_graph[ix])
 E = int(example_graph[ix+1])
-matrix = np.zeros((V,V))
+matrix = []
+for i in range(V):
+    matrix.append([])
 for l in example_graph[ix+2:]:
     i,j = l.split(' ')
     i = int(i)-1
     j = int(j)-1
-    matrix[i][j] = 1
-    matrix[j][i] = 1
+    matrix[i].append(j+1)
+    matrix[j].append(i+1)
 for i in range(V):
-    matrix[i][i] = 1
+    matrix[i].append(i+1)
 
-str_out = f"V={V};\ngraph=[|"
+str_out = f"V={V};\ngraph=["
 
 for i in range(V):
-    for j in range(V):
-        if matrix[i][j] == 0:
-            str_out += "false"
-        else:
-            str_out += "true"
-        if j < V-1:
+    str_out += "{"
+    for j in range(len(matrix[i])):
+        str_out += str(matrix[i][j])
+        if j < len(matrix[i])-1:
             str_out += ","
+        else:
+            str_out += "}"
 
     if i < V-1:
-        str_out += "\n|"
+        str_out += ","
     else:
-        str_out += "|];\n"
+        str_out += "];\n"
 
 ix = 0
 while example_scenario[ix][0] == "#":
@@ -65,7 +67,7 @@ for l in example_scenario[ix+2+A+1:]:
 
 str_out += "];\n"
 
-for t in tqdm(range(2,10)):
+for t in tqdm(range(2,30)):
     str_out_w_t = f"T={t};\n"+str_out
     file = open(f"dzn/{prefix}-input.dzn", "w")
     file.write(str_out_w_t)
