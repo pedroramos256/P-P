@@ -26,7 +26,7 @@ constraint forall(i in 2..T,j in AGENTS)(graph[makespan[i-1,j],makespan[i,j]]==t
 solve satisfy;
 
 output [ show_int(V, makespan[i,j]) ++ 
-         if j == A then "\n" else " " endif |
+         if j == A then "\n" endif |
          i in TIMESTEPS, j in AGENTS
        ];
 

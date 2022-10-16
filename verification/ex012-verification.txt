@@ -1,0 +1,7 @@
+*** chkcpf: a CPF checker ***
+*** author: Joao Marques-Silva ***
+
+Checking time step 0
+Checking time step 1
+Agent 3 moving to non-empty position: 5
+Checking failed at time step: 1

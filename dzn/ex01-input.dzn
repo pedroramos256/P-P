@@ -1,0 +1,9 @@
+T=2;
+V=4;
+graph=[|true,true,true,true
+|true,true,true,true
+|true,true,true,true
+|true,true,true,true|];
+A=1;
+start=[4];
+end=[1];

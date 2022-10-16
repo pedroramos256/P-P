@@ -1,0 +1,6 @@
+*** chkcpf: a CPF checker ***
+*** author: Joao Marques-Silva ***
+
+Checking time step 0
+Checking time step 1
+Solution checked. Congratulations!
