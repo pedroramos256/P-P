@@ -7,7 +7,6 @@ int : V;
 set of int: VERTICES = 1..V;
 
 array [VERTICES] of set of int: graph;
-array [VERTICES] of set of int: graph_history;
 
 int : A;
 set of int: AGENTS = 1..A;
@@ -15,20 +14,18 @@ set of int: AGENTS = 1..A;
 array [AGENTS] of VERTICES: start;
 array [AGENTS] of VERTICES: end;
 
-array [TIMESTEPS,AGENTS] of var VERTICES: makespan;
+array [TIMESTEPS,VERTICES] of var 0..A: agent_pos;
 
-constraint forall(i in AGENTS)(makespan[1,i] = start[i]);
-constraint forall(i in AGENTS)(makespan[T,i] = end[i]);
+constraint forall(i in AGENTS)(agent_pos[1,start[i]] = i);
+constraint forall(i in AGENTS)(agent_pos[T,end[i]] = i);
 
 
-constraint forall(i in AGENTS)(occupied[1,start[i]] = 1);
-constraint forall(i in AGENTS)(occupied[T,end[i]] = 1);
-constraint sum(j in VERTICES)(occupied[1,j]) == A;                                                                                                          
-constraint sum(j in VERTICES)(occupied[T,j]) == A;                                                                                                          
+constraint sum(j in VERTICES)(agent_pos[1,j]) == A*(A-1)/2;                                                                                                          
+constraint sum(j in VERTICES)(agent_pos[T,j]) == A*(A-1)/2;                                                                                                       
 
 
 
-constraint forall(i in 2..T,j in AGENTS)(makespan[i,j] in graph[makespan[i-1,j]] 
+constraint forall(i in 2..T,j in VERTICES)(if agent_pos[i,j] != 0 then j in graph[makespan[i-1,j]] 
                                       /\ (makespan[i,j] == makespan[i-1,j] \/ occupied[i-1,makespan[i,j]] == 0)
                                       /\ occupied[i,makespan[i,j]] = 1);
                                                                             
