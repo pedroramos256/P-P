@@ -7,6 +7,7 @@ int : V;
 set of int: VERTICES = 1..V;
 
 array [VERTICES] of set of int: graph;
+array [VERTICES] of set of int: graph_history;
 
 int : A;
 set of int: AGENTS = 1..A;
@@ -14,10 +15,7 @@ set of int: AGENTS = 1..A;
 array [AGENTS] of VERTICES: start;
 array [AGENTS] of VERTICES: end;
 
-array [TIMESTEPS,VERTICES] of var 0..1: occupied;
-
 array [TIMESTEPS,AGENTS] of var VERTICES: makespan;
-
 
 constraint forall(i in AGENTS)(makespan[1,i] = start[i]);
 constraint forall(i in AGENTS)(makespan[T,i] = end[i]);
@@ -29,13 +27,16 @@ constraint sum(j in VERTICES)(occupied[1,j]) == A;
 constraint sum(j in VERTICES)(occupied[T,j]) == A;                                                                                                          
 
 
-constraint forall(i in 2..T,j in AGENTS)((makespan[i,j] in graph[makespan[i-1,j]])
+
+constraint forall(i in 2..T,j in AGENTS)(makespan[i,j] in graph[makespan[i-1,j]] 
                                       /\ (makespan[i,j] == makespan[i-1,j] \/ occupied[i-1,makespan[i,j]] == 0)
                                       /\ occupied[i,makespan[i,j]] = 1);
                                                                             
 constraint forall(i in 2..T-1)(sum(j in VERTICES)(occupied[i,j]) == A);                                                                                                          
                                                                             
 constraint forall(i in TIMESTEPS)(all_different([makespan[i,j] | j in AGENTS]));
+
+%constraint forall(i in 2..T,j in AGENTS,v in graph[makespan[i-1,j]])(if j != k then makespan[i-1,j]!=makespan[i,k] endif);
 
 
 solve satisfy;
