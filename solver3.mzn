@@ -16,36 +16,33 @@ array [VERTICES,VERTICES] of int : distances;
 
 array [TIMESTEPS,AGENTS,VERTICES] of var 0..1: makespan;
 
-array [TIMESTEPS,AGENTS] of var VERTICES: agent_state;
-array [TIMESTEPS,VERTICES] of var 0..A: vertice_state;
+%initialization
+constraint forall(i in AGENTS)(makespan[1,i,start[i]] = 1);
+constraint forall(i in AGENTS)(makespan[T,i,end[i]] = 1);
 
-
-constraint forall(i in AGENTS)(makespan[1,i,start[i]] = 1 /\ agent_state[1,i] = start[i]);
-constraint forall(i in AGENTS)(makespan[T,i,end[i]] = 1 /\ agent_state[T,i] = end[i]);
-
-constraint forall(i in AGENTS)(vertice_state[1,start[i]] = i);
-constraint forall(i in AGENTS)(vertice_state[T,end[i]] = i);
-
-constraint forall(i in TIMESTEPS)(sum(vertice_state[i,..]) == A*(A+1)/2);
-constraint forall(i in TIMESTEPS)(all_different([agent_state[i,j] | j in AGENTS]));
-
-constraint forall(i in 2..T-1,j in AGENTS, k in VERTICES)(if makespan[i,j,k] == 1 then (agent_state[i,j] = k /\ vertice_state[i,k] = j) endif);
-
-
-constraint forall(i in TIMESTEPS,j in AGENTS)(sum(makespan[i,j,..]) == 1);          
-constraint forall(i in TIMESTEPS,j in VERTICES)(sum(makespan[i,..,j]) <= 1);                                                                                                                                                                                                        
-
+%verifying no agent is getting out of route
 constraint forall(i in TIMESTEPS,j in AGENTS,k in VERTICES)(if makespan[i,j,k] == 1 then distances[k,end[j]] <= T-i endif);   
 
-constraint forall(i in 2..T,j in AGENTS,k in VERTICES)(if makespan[i,j,k] == 1 then (distances[k,agent_state[i-1,j]] == 1 /\ vertice_state[i-1,k] == 0)
-                                                       \/ (agent_state[i-1,j] == k) endif);                                              
+%if an agent goes to a vertex, than no agent can be there before and the agent has a connection to that vertex, or the agent stays in the same place
+constraint forall(i in 2..T,j in AGENTS,k in VERTICES)(if makespan[i,j,k] == 1 then (sum(makespan[i-1,..,k])==0 /\ 
+                                                                                    (forall(l in VERTICES)(if makespan[i-1,j,l] == 1 then distances[k,l] == 1 endif))) 
+                                                                                 \/ (makespan[i-1,j,k] == 1) endif);                                              
                                                                             
 
-solve satisfy;
+%each agent is only in one vertex
+constraint forall(i in TIMESTEPS,j in AGENTS)(sum(makespan[i,j,..]) == 1);        
+%each vertex has 1 or 0 agents  
+constraint forall(i in TIMESTEPS,j in VERTICES)(sum(makespan[i,..,j]) <= 1);                                                                                                                                                                                                        
 
-output [ show_int(V, agent_state[i,j]) ++ 
-         if j == A then "\n" endif |
-         i in TIMESTEPS, j in AGENTS
+
+
+%starting with all values at zero (indomain_min) and changing values starting at timestep 1 (input_order).
+solve:: int_search(makespan,input_order,indomain_min) satisfy;
+
+
+output [ if fix(makespan[i,j,k]) == 1 then "\(k) " endif ++ 
+         if k == V /\ j == A then "\n" endif |
+         i in TIMESTEPS, j in AGENTS, k in VERTICES
        ];
 
 
