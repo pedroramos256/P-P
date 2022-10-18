@@ -16,34 +16,34 @@ array [VERTICES,VERTICES] of int : distances;
 
 array [TIMESTEPS,AGENTS,VERTICES] of var 0..1: makespan;
 
-constraint forall(i in AGENTS)(makespan[1,i,start[i]] = 1);
-constraint forall(i in AGENTS)(makespan[T,i,end[i]] = 1);
+array [TIMESTEPS,AGENTS] of var VERTICES: agent_state;
+array [TIMESTEPS,VERTICES] of var 0..A: vertice_state;
 
-constraint forall(i in TIMESTESPS,j in AGENTS)(sum(k in VERTICES)(makespan[i,j,k]) == 1);                                                                                                          
 
-constraint forall(i in TIMESTEPS,j in AGENTS,k in VERTICES)(if makespan[i,j,k] != 0 then distances[k,end[j]] <= T-i endif);   
+constraint forall(i in AGENTS)(makespan[1,i,start[i]] = 1 /\ agent_state[1,i] = start[i]);
+constraint forall(i in AGENTS)(makespan[T,i,end[i]] = 1 /\ agent_state[T,i] = end[i]);
 
-constraint forall(i in 2..T,j in AGENTS,k in VERTICES)(distances[makespan[i,j],makespan[i-1,j]] == 1 /\
-                                                        
-                                                      else if 
-if agent_pos[i-1,j] == k then
-                                                          (agent_pos[i,j] = k /\ makespan[i,j,k] = 1) \/ (agent_pos[i,j] = k /\ makespan[i,j,k] = 0
-                                                       else if distances[j,k] then
-                                                          makespan[i,
-                                                          makespan[i-1,j,k] = 1 \/ distances[j,k]
-                                                        makespan[i,j,k] == 0 else agent_pos[i,j] in graph[makespan[i-1,j]] 
-                                      /\ (makespan[i,j] == makespan[i-1,j] \/ occupied[i-1,makespan[i,j]] == 0)
-                                      /\ occupied[i,makespan[i,j]] = 1);
+constraint forall(i in AGENTS)(vertice_state[1,start[i]] = i);
+constraint forall(i in AGENTS)(vertice_state[T,end[i]] = i);
+
+constraint forall(i in TIMESTEPS)(sum(vertice_state[i,..]) == A*(A+1)/2);
+constraint forall(i in TIMESTEPS)(all_different([agent_state[i,j] | j in AGENTS]));
+
+constraint forall(i in 2..T-1,j in AGENTS, k in VERTICES)(if makespan[i,j,k] == 1 then (agent_state[i,j] = k /\ vertice_state[i,k] = j) endif);
+
+
+constraint forall(i in TIMESTEPS,j in AGENTS)(sum(makespan[i,j,..]) == 1);          
+constraint forall(i in TIMESTEPS,j in VERTICES)(sum(makespan[i,..,j]) <= 1);                                                                                                                                                                                                        
+
+constraint forall(i in TIMESTEPS,j in AGENTS,k in VERTICES)(if makespan[i,j,k] == 1 then distances[k,end[j]] <= T-i endif);   
+
+constraint forall(i in 2..T,j in AGENTS,k in VERTICES)(if makespan[i,j,k] == 1 then (distances[k,agent_state[i-1,j]] == 1 /\ vertice_state[i-1,k] == 0)
+                                                       \/ (agent_state[i-1,j] == k) endif);                                              
                                                                             
-                                                                            
-constraint forall(i in 2..T-1)(all_different([agent_pos[i,j] | j in AGENTS]));
-
-%constraint forall(i in 2..T,j in AGENTS,v in graph[makespan[i-1,j]])(if j != k then makespan[i-1,j]!=makespan[i,k] endif);
-
 
 solve satisfy;
 
-output [ show_int(V, agent_pos[i,j]) ++ 
+output [ show_int(V, agent_state[i,j]) ++ 
          if j == A then "\n" endif |
          i in TIMESTEPS, j in AGENTS
        ];

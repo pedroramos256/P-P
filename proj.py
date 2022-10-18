@@ -119,7 +119,7 @@ for t in tqdm(range(int(t_lower+1),30)):
     file = open(f"dzn/{prefix}-input.dzn", "w")
     file.write(str_out_w_t)
     file.close()
-    os.system(f"minizinc --solver chuffed solver2.mzn dzn/{prefix}-input.dzn > mzn/{prefix}-solution.txt")
+    os.system(f"minizinc --solver chuffed solver4.mzn dzn/{prefix}-input.dzn > mzn/{prefix}-solution.txt")
     
     lines = open(f"mzn/{prefix}-solution.txt","r").readlines()
     if len(lines) > 1:
