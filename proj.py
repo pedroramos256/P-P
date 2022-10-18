@@ -27,7 +27,8 @@ for l in example_graph[ix+2:]:
 #for i in range(V):
 #    matrix[i].append(i+1)
 
-str_out = f"V={V};\ngraph=["
+str_out = f"V={V};\n"
+"""graph=["
 
 for i in range(V):
     str_out += "{"
@@ -35,14 +36,14 @@ for i in range(V):
         str_out += str(matrix[i][j])
         if j < len(matrix[i])-1:
             str_out += ","
-        else:
-            str_out += "}"
+       
+    str_out += "}"
 
     if i < V-1:
         str_out += ","
-    else:
-        str_out += "];\n"
-
+    
+str_out += "];\n"
+"""
 ix = 0
 while example_scenario[ix][0] == "#":
     ix += 1
