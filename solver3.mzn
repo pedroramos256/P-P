@@ -9,6 +9,8 @@ set of int: VERTICES = 1..V;
 int : A;
 set of int: AGENTS = 1..A;
 
+array [VERTICES] of set of int: graph;
+
 array [AGENTS] of VERTICES: start;
 array [AGENTS] of VERTICES: end;
 
@@ -24,8 +26,8 @@ constraint forall(i in AGENTS)(makespan[T,i,end[i]] = 1);
 constraint forall(i in TIMESTEPS,j in AGENTS,k in VERTICES)(if makespan[i,j,k] == 1 then distances[k,end[j]] <= T-i endif);   
 
 %if an agent goes to a vertex, than no agent can be there before and the agent has a connection to that vertex, or the agent stays in the same place
-constraint forall(i in 2..T,j in AGENTS,k in VERTICES)(if makespan[i,j,k] == 1 then (sum(makespan[i-1,..,k])==0 /\ 
-                                                                                    (forall(l in VERTICES)(if makespan[i-1,j,l] == 1 then distances[k,l] == 1 endif))) 
+constraint forall(i in 2..T,j in AGENTS,k in VERTICES)(if makespan[i,j,k] == 1 then (sum(makespan[i-1,..,k])==0 /\ %verifying no agent was there before
+                                                                                    (not forall(l in graph[k])(makespan[i-1,j,l] == 0)))%verifying the agent came from an adjacent vertice 
                                                                                  \/ (makespan[i-1,j,k] == 1) endif);                                              
                                                                             
 
