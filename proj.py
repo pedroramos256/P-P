@@ -1,3 +1,4 @@
+from hashlib import new
 import numpy as np
 import sys
 import os
@@ -15,34 +16,35 @@ while example_graph[ix][0] == "#":
     ix += 1
 V = int(example_graph[ix])
 E = int(example_graph[ix+1])
-matrix = []
+graph = []
 for i in range(V):
-    matrix.append([])
+    graph.append([])
 for l in example_graph[ix+2:]:
     i,j = l.split(' ')
     i = int(i)-1
     j = int(j)-1
-    matrix[i].append(j+1)
-    matrix[j].append(i+1)
+    graph[i].append(j+1)
+    graph[j].append(i+1)
 #for i in range(V):
-#    matrix[i].append(i+1)
+#    graph[i].append(i+1)
 
-str_out = f"V={V};\n"
-str_out+="graph=["
 
-for i in range(V):
-    str_out += "{"
-    for j in range(len(matrix[i])):
-        str_out += str(matrix[i][j])
-        if j < len(matrix[i])-1:
+def print_graph(graph):
+    str_out="graph=["
+    for i in range(V):
+        str_out += "{"
+        for j in range(len(graph[i])):
+            str_out += str(graph[i][j])
+            if j < len(graph[i])-1:
+                str_out += ","
+        
+        str_out += "}"
+
+        if i < V-1:
             str_out += ","
-       
-    str_out += "}"
-
-    if i < V-1:
-        str_out += ","
-    
-str_out += "];\n"
+        
+    str_out += "];\n"
+    return str_out
 
 ix = 0
 while example_scenario[ix][0] == "#":
@@ -54,7 +56,7 @@ end = []
 for i in range(A):
     start.append(0)
     end.append(0)
-str_out += f"A={A};\nstart=["
+str_out = f"A={A};\nstart=["
 for l in example_scenario[ix+2:ix+2+A]:
     i,j = l.split(' ')
     i = int(i)
@@ -78,34 +80,37 @@ str_out += "];\n"
 
 distances = np.zeros((V,V))
 
-def bfs(visited, graph, node, queue): #function for BFS
+def bfs(visited, graph, node, queue, dist): #function for BFS
     visited.append(node)
     queue.append([node, 0])
     while queue:          # Creating loop to visit each node
         m, distance = queue.pop(0)
-        distances[node][m] = distance 
+        dist[node][m] = distance 
         for neighbour in graph[m]:
             if (neighbour-1) not in visited:
                 queue.append([neighbour-1, distance+1])
                 visited.append(neighbour-1)
+    return dist
 
 for v in range(V):
     visited = []    # List for visited nodes.
     queue = []      #Initialize a queue
-    bfs(visited, matrix, v, queue)
+    distances = bfs(visited, graph, v, queue, distances)
 
 
-str_out += "distances=[|"
-for i in range(V):
-    for j in range(V):
-        str_out += f"{int(distances[i][j])}"
-      
-        if j < V-1:
-            str_out += ","
-    if i < V-1:
-        str_out += "\n|"
-    else:
-        str_out += "|];\n"
+def print_distances(dist):
+    str_out = "distances=[|"
+    for i in tqdm(range(V)):
+        for j in range(V):
+            str_out += f"{int(dist[i][j])}"
+        
+            if j < V-1:
+                str_out += ","
+        if i < V-1:
+            str_out += "\n|"
+        else:
+            str_out += "|];\n"
+    return str_out
 
 t_lower = 0
 for i in range(len(start)):
@@ -114,7 +119,48 @@ for i in range(len(start)):
         t_lower = dist
 
 for t in tqdm(range(int(t_lower+1),30)):
-    str_out_w_t = f"T={t};\n"+str_out
+    v_to_delete = []
+    for v in range(V):
+        best_time = t
+        entered = False
+        for a in range(A):
+            if start[a]-1 != v and end[a]-1 != v:
+                entered = True
+                time_for_a = distances[start[a]-1][v] + distances[v][end[a]-1]
+                if time_for_a < best_time:
+                    best_time = time_for_a
+        if best_time >= t and entered:
+            v_to_delete.append(v)
+    #print(v_to_delete)
+    new_distances = distances
+    new_distances = np.delete(new_distances, v_to_delete, axis=0)
+    new_distances = np.delete(new_distances, v_to_delete, axis=1)
+    print(new_distances)
+    new_graph = []
+    V = len(new_distances)
+    print(V)
+    
+    for i in range(V):
+        new_connections = []
+        for j in range(V):
+            if new_distances[i][j] == 1:
+                new_connections.append(j)
+        new_graph.append(new_connections)
+
+    new_distances = np.zeros((V,V))
+    for v in range(V):
+        visited = []    # List for visited nodes.
+        queue = []      #Initialize a queue
+        new_distances = bfs(visited, new_graph, v, queue, new_distances)
+    
+    #print(distances)
+    #print("\n")
+    #print(new_graph)
+    #print("\n")
+    #print(V,len(new_graph), len(distances))
+    str_out_w_t = f"T={t};\nV={V};\n"+print_graph(new_graph)+str_out+print_distances(new_distances)
+    print(str_out_w_t)
+    exit(0)
     file = open(f"dzn/{prefix}-input.dzn", "w")
     file.write(str_out_w_t)
     file.close()
