@@ -6,7 +6,7 @@ set of int: TIMESTEPS = 1..T;
 int : V;
 set of int: VERTICES = 1..V;
 
-%array [VERTICES] of set of int: graph;
+array [VERTICES] of set of int: graph;
 
 int : A;
 set of int: AGENTS = 1..A;
@@ -24,7 +24,7 @@ constraint forall(i in AGENTS)(makespan[T,i] == end[i]);
                                          
 constraint forall(i in TIMESTEPS,j in AGENTS)(distances[makespan[i,j],end[j]] <= T-i);                                                                         
 
-constraint forall(i in 2..T,j in AGENTS)(((distances[makespan[i-1,j],makespan[i,j]] == 1) /\ not(makespan[i,j] in makespan[i-1,..])) \/ (makespan[i,j] == makespan[i-1,j]));
+constraint forall(i in 2..T,j in AGENTS)(((makespan[i,j] in graph[makespan[i-1,j]]) /\ not(makespan[i,j] in makespan[i-1,..])) \/ (makespan[i,j] == makespan[i-1,j]));
                                                                                                                                                                                                                                                                                                 
 constraint forall(i in TIMESTEPS)(all_different([makespan[i,j] | j in AGENTS]));
 

@@ -28,7 +28,7 @@ for l in example_graph[ix+2:]:
 #    matrix[i].append(i+1)
 
 str_out = f"V={V};\n"
-"""graph=["
+str_out+="graph=["
 
 for i in range(V):
     str_out += "{"
@@ -43,7 +43,7 @@ for i in range(V):
         str_out += ","
     
 str_out += "];\n"
-"""
+
 ix = 0
 while example_scenario[ix][0] == "#":
     ix += 1
@@ -107,7 +107,6 @@ for i in range(V):
     else:
         str_out += "|];\n"
 
-
 t_lower = 0
 for i in range(len(start)):
     dist = distances[start[i]-1][end[i]-1]
@@ -119,7 +118,7 @@ for t in tqdm(range(int(t_lower+1),30)):
     file = open(f"dzn/{prefix}-input.dzn", "w")
     file.write(str_out_w_t)
     file.close()
-    os.system(f"minizinc --solver chuffed solver3.mzn dzn/{prefix}-input.dzn > mzn/{prefix}-solution.txt")
+    os.system(f"minizinc --solver chuffed solver2.mzn dzn/{prefix}-input.dzn > mzn/{prefix}-solution.txt")
     
     lines = open(f"mzn/{prefix}-solution.txt","r").readlines()
     if len(lines) > 1:

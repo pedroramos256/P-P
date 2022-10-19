@@ -34,7 +34,7 @@ constraint sum(j in VERTICES)(occupied[1,j]) == A;
 
 constraint forall(i in TIMESTEPS,j in AGENTS)(distances[makespan[i,j],end[j]] <= T-i);   
 
-constraint forall(i in 2..T-1)(sum(j in VERTICES)(occupied[i,j]) == A);                                                   
+constraint forall(i in 2..T-1)(sum(j in VERTICES)(occupied[i,j]) == A);   
                                                                                                                                                     
 constraint forall(i in 2..T,j in AGENTS)((occupied[i,makespan[i,j]] = 1) /\
                                           (((distances[makespan[i-1,j],makespan[i,j]]==1)
