@@ -51,32 +51,39 @@ while example_scenario[ix][0] == "#":
     ix += 1
 A = int(example_scenario[ix])
     
-start = []
-end = []
-for i in range(A):
-    start.append(0)
-    end.append(0)
-str_out = f"A={A};\nstart=["
+start = np.zeros((A),dtype=int)
+end = np.zeros((A),dtype=int)
+
 for l in example_scenario[ix+2:ix+2+A]:
     i,j = l.split(' ')
     i = int(i)
     j = int(j)
     start[i-1] = j
-    str_out += f"{j}"
-    if i < A:
-        str_out += ","
-str_out += "];\n"
-str_out += "end=["
+    
 for l in example_scenario[ix+2+A+1:]:
     i,j = l.split(' ')
     i = int(i)
     j = int(j)
     end[i-1] = j
-    str_out += f"{j}"
-    if i < A:
-        str_out += ","
 
-str_out += "];\n"
+
+def print_start_end(start,end):
+    str_out = f"A={A};\nstart=["
+    for i in range(A):
+       
+        str_out += f"{start[i]}"
+        if i < A-1:
+            str_out += ","
+    str_out += "];\n"
+    str_out += "end=["
+    for i in range(A):
+     
+        str_out += f"{end[i]}"
+        if i < A-1:
+            str_out += ","
+
+    str_out += "];\n"
+    return str_out
 
 distances = np.zeros((V,V))
 
@@ -135,16 +142,18 @@ for t in tqdm(range(int(t_lower+1),30)):
     new_distances = distances
     new_distances = np.delete(new_distances, v_to_delete, axis=0)
     new_distances = np.delete(new_distances, v_to_delete, axis=1)
-    print(new_distances)
+    #print(new_distances)
     new_graph = []
+    mapping = np.zeros((V))
+
     V = len(new_distances)
-    print(V)
+    #print(V)
     
     for i in range(V):
         new_connections = []
         for j in range(V):
             if new_distances[i][j] == 1:
-                new_connections.append(j)
+                new_connections.append(j+1)
         new_graph.append(new_connections)
 
     new_distances = np.zeros((V,V))
@@ -158,9 +167,41 @@ for t in tqdm(range(int(t_lower+1),30)):
     #print(new_graph)
     #print("\n")
     #print(V,len(new_graph), len(distances))
-    str_out_w_t = f"T={t};\nV={V};\n"+print_graph(new_graph)+str_out+print_distances(new_distances)
-    print(str_out_w_t)
-    exit(0)
+    #print(v_to_delete)
+    if v_to_delete != []:
+        for i in range(len(mapping)):
+            for c,v in enumerate(v_to_delete):
+                if v > i:
+                    mapping[i] = i+1-c
+                    break
+            if v_to_delete[-1] < i:
+                mapping[i] = i+1-len(v_to_delete)
+
+        for i in range(A):
+            start[i] = mapping[start[i]-1]
+            end[i] = mapping[end[i]-1]
+    
+    print(mapping)
+
+    """
+        for i in range(A):
+            for c,v in enumerate(v_to_delete):
+                if v > start[i]-1:
+                    start[i] -= c
+                    break
+            if v_to_delete[-1] < start[i]-1:
+                start[i] -= len(v_to_delete)
+
+            for c,v in enumerate(v_to_delete):
+                if v > end[i]-1:
+                    end[i] -= c
+                    break
+            if v_to_delete[-1] < end[i]-1:
+                end[i] -= len(v_to_delete)
+    """
+
+    str_out_w_t = f"T={t};\nV={V};\n"+print_graph(new_graph)+print_start_end(start,end)+print_distances(new_distances)
+    #print(str_out_w_t)
     file = open(f"dzn/{prefix}-input.dzn", "w")
     file.write(str_out_w_t)
     file.close()
@@ -171,6 +212,14 @@ for t in tqdm(range(int(t_lower+1),30)):
         output = ""
         for i,l in enumerate(lines[:-1]):
             nodes = l.split()
+
+            nodes_after = [4,2,3]
+            v_to_delete = [2,3,4,6]
+            nodes_before = [8,5,7]
+            for j in range(len(nodes)):
+                nodes[j] = np.where(mapping==int(nodes[j])+1)  
+            print(nodes)
+            exit(0)
             output += f"i={i}\t"
             for j,node in enumerate(nodes):
                 output += f"{j+1}:{node}"
