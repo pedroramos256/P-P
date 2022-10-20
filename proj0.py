@@ -113,6 +113,9 @@ for i in range(len(start)):
     if dist > t_lower:
         t_lower = dist
 
+print(sum(distances)/(V-1))
+exit()
+
 for t in tqdm(range(int(t_lower+1),30)):
     str_out_w_t = f"T={t};\n"+str_out
     file = open(f"dzn/{prefix}-input.dzn", "w")

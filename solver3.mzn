@@ -28,7 +28,7 @@ constraint forall(i in TIMESTEPS,j in AGENTS,k in VERTICES)(if makespan[i,j,k] =
 %if an agent goes to a vertex, than no agent can be there before and the agent has a connection to that vertex, or the agent stays in the same place
 constraint forall(i in 2..T,j in AGENTS,k in VERTICES)(if makespan[i,j,k] == 1 then (sum(makespan[i-1,..,k])==0 /\ %verifying no agent was there before
                                                                                     (not forall(l in graph[k])(makespan[i-1,j,l] == 0)))%verifying the agent came from an adjacent vertice 
-                                                                                 \/ (makespan[i-1,j,k] == 1) endif);                                              
+                                                                                 \/ (makespan[i-1,j,k] == 1) endif);%the agent stays in the same place                                      
                                                                             
 
 %each agent is only in one vertex
