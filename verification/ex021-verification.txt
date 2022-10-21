@@ -1,4 +1,4 @@
 *** chkcpf: a CPF checker ***
 *** author: Joao Marques-Silva ***
 
-Checking time step 0
+Snapshot with repeated positions?? Terminating ...

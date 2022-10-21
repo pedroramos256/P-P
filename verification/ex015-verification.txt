@@ -2,3 +2,22 @@
 *** author: Joao Marques-Silva ***
 
 Checking time step 0
+Checking time step 1
+Checking time step 2
+Checking time step 3
+Checking time step 4
+Checking time step 5
+Checking time step 6
+Checking time step 7
+Checking time step 8
+Checking time step 9
+Checking time step 10
+Checking time step 11
+Checking time step 12
+Checking time step 13
+Checking time step 14
+Checking time step 15
+Checking time step 16
+Checking time step 17
+Checking time step 18
+Solution checked. Congratulations!
